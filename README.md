@@ -155,7 +155,7 @@ keibascraper.race_list(year, month)
   - `year` (int): The target year.
   - `month` (int): The target month.
 - **Returns**:
-  - A list of race IDs (str).
+  - A list of race IDs (list).
 
 
 ## Contributing

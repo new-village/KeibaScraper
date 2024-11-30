@@ -42,7 +42,7 @@ def race_list(year:int, month:int) -> list:
     :param month: target month
     """
     calc = CalendarLoader(year, month)
-    return calc.exec()
+    return calc.load()
 
 class BaseLoader:
     """
@@ -279,7 +279,7 @@ class CalendarLoader:
         url = f"https://keiba.yahoo.co.jp/schedule/list/{self.year}/?month={self.month}"
         content = self.load_contents(url)
         race_ids = parse_html('cal', content)
-        return race_ids
+        return self.expand_race_ids(race_ids)
 
     def load_contents(self, url):
         """
@@ -294,11 +294,42 @@ class CalendarLoader:
         Raises:
             RuntimeError: If the request fails due to network issues or invalid URLs.
         """
-        # Wait for rate limiting (2-3 seconds)
-        time.sleep(random.uniform(2, 3))
         try:
             response = requests.get(url)
             response.encoding = 'EUC-JP'
             return response.text
         except requests.RequestException as e:
             raise RuntimeError(f"Failed to load contents from {url}") from e
+    
+    def expand_race_ids(self, input_data):
+        """
+        Expands race_ids based on the specified transformation rules.
+        
+        - If race_id is 8 digits:
+            - Add the prefix '20'
+            - Append '01' through '12' to generate 12 race_ids
+        
+        Parameters:
+            input_data (list): [{'race_id': '23060101'}, {'race_id': '23070101'}, ...]
+        
+        Returns:
+            list: List of transformed race_ids
+        """
+        race_ids = []
+        
+        for item in input_data:
+            race_id = item.get('race_id')
+            if not race_id:
+                print(f"Warning: Item {item} does not contain 'race_id'. Skipping.")
+                continue
+            
+            if len(race_id) == 8:
+                base_id = '20' + race_id  # Add prefix '20'
+                # Append '01' through '12' to generate 12 race_ids
+                expanded_ids = [f"{base_id}{str(i).zfill(2)}" for i in range(1, 13)]
+                race_ids.extend(expanded_ids)
+            else:
+                print(f"Warning: race_id '{race_id}' has invalid length ({len(race_id)}). Skipping.")
+        
+        return race_ids
+
