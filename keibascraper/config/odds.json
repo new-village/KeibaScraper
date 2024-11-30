@@ -8,12 +8,6 @@
     },
     "columns": [
         {
-            "col_name": "id", 
-            "alias": "オッズID",
-            "selector": "null",
-            "post_func": {"name": "create_uid", "args": ["race_id", "horse_number"]},
-            "var_type": "text"
-        },{
             "col_name": "race_id", 
             "alias": "レースID",
             "selector": "null",
@@ -44,6 +38,12 @@
             "selector": ".data.odds[\"2\"][][1]",
             "var_type": "real",
             "reg": "\\d+.?\\d?"
+        },{
+            "col_name": "id", 
+            "alias": "オッズID",
+            "selector": "null",
+            "post_func": {"name": "create_uid", "args": ["race_id", "horse_number"]},
+            "var_type": "text"
         }
     ]
 }

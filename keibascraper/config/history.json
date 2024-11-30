@@ -8,12 +8,6 @@
     },
     "columns": [
         {
-            "col_name": "id", 
-            "alias": "出走履歴ID",
-            "selector": "null",
-            "post_func": {"name": "create_uid", "args": ["race_id", "horse_number"]},
-            "var_type": "text"
-        },{
             "col_name": "horse_id", 
             "alias": "馬ID",
             "selector": "null",
@@ -148,7 +142,7 @@
             "col_name" : "course",
             "alias": "コース",
             "selector" : "null",
-            "post_func": {"name": "concatinate", "args": ["place", "type", "length"]},
+            "post_func": {"name": "concat", "args": ["place", "type", "length"]},
             "var_type" : "text"
         },{
             "col_name": "condition",
@@ -194,6 +188,12 @@
             "post_func": {"name": "zero_fill", "args": ["prize"]},
             "var_type": "real",
             "reg" : "\\d+,\\d+.\\d+|\\d+.\\d+"
+        },{
+            "col_name": "id", 
+            "alias": "出走履歴ID",
+            "selector": "null",
+            "post_func": {"name": "create_uid", "args": ["race_id", "horse_number"]},
+            "var_type": "text"
         }
     ]
 }

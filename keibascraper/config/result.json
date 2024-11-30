@@ -8,12 +8,6 @@
     },
     "columns": [
         {
-            "col_name": "id", 
-            "alias": "結果ID",
-            "selector": "null",
-            "post_func": {"name": "create_uid", "args": ["race_id", "horse_number"]},
-            "var_type": "text"
-        },{
             "col_name": "race_id", 
             "alias": "レースID",
             "selector": "null",
@@ -78,10 +72,10 @@
             "reg" : "/jockey/result/recent/(\\w+)/",
             "index": "jockey_id"
         },{
-            "col_name": "jackey_name",
+            "col_name": "jockey_name",
             "alias": "騎手名",
             "selector": "td:nth-of-type(7) a",
-            "pre_func": {"name": "get_title", "args": ["jackey_name"]},
+            "pre_func": {"name": "get_title", "args": ["jockey_name"]},
             "var_type": "text",
             "reg" : "\\D+"
         },{
@@ -142,6 +136,12 @@
             "post_func": {"name": "zero_fill", "args": ["prize"]},
             "var_type": "real",
             "reg" : "\\d{1,3},\\d{3}\\.\\d{1}|\\d{1,3}\\.\\d{1}"
+        },{
+            "col_name": "id", 
+            "alias": "結果ID",
+            "selector": "null",
+            "post_func": {"name": "create_uid", "args": ["race_id", "horse_number"]},
+            "var_type": "text"
         }
     ]
 }

@@ -86,7 +86,7 @@
             "col_name" : "course",
             "alias": "コース",
             "selector" : "null",
-            "post_func": {"name": "concatinate", "args": ["place", "type", "length"]},
+            "post_func": {"name": "concat", "args": ["place", "type", "length"]},
             "var_type" : "text"
         },{
             "col_name" : "round",
