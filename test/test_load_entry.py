@@ -18,16 +18,13 @@ class TestEntryLoader(unittest.TestCase):
         try:
             cls.invalid_race_data = keibascraper.load('entry', cls.invalid_race_id)
         except RuntimeError as e:
-            print(e)
             cls.invalid_race_error = e
 
     def test_valid_race_info(self):
         """Test that valid race info is loaded correctly."""
-        race_info, entry_list = self.valid_race_data
-        self.assertIsInstance(race_info, dict)
-        self.assertIsInstance(entry_list, list)
-        self.assertGreater(len(race_info), 0)
-        self.assertGreater(len(entry_list), 0)
+        self.assertIsInstance(self.valid_race_data, dict)
+        self.assertGreater(len(self.valid_race_data), 0)
+        self.assertGreater(len(self.valid_race_data['entry']), 0)
 
     def test_invalid_race_info(self):
         """Test that loading an invalid race ID raises an error."""
@@ -37,7 +34,8 @@ class TestEntryLoader(unittest.TestCase):
 
     def test_race_info_content(self):
         """Test content of the race info for a valid race ID."""
-        race_info, _ = self.valid_race_data
+        race_info = self.valid_race_data.copy()
+        entry = race_info.pop('entry')
         expected_race_info = {
             'id': '202210040211',
             'race_number': 11,
@@ -61,7 +59,7 @@ class TestEntryLoader(unittest.TestCase):
 
     def test_entry_list_content(self):
         """Test content of the entry list for a valid race ID."""
-        _, entry_list = self.valid_race_data
+        entry_list = self.valid_race_data['entry']
         expected_entry = {
             'id': '20221004021102',
             'race_id': '202210040211',
@@ -83,7 +81,7 @@ class TestEntryLoader(unittest.TestCase):
 
     def test_scratch_entry(self):
         """Test an entry where the horse was scratched (did not run)."""
-        _, entry_list = self.valid_race_data
+        entry_list = self.valid_race_data['entry']
         expected_entry = {
             'id': '20221004021108',
             'race_id': '202210040211',

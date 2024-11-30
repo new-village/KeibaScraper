@@ -34,11 +34,9 @@ class TestResultLoader(unittest.TestCase):
 
     def test_valid_result_info(self):
         """Test that valid race results are loaded correctly."""
-        race_info, result_list = self.valid_result_data
-        self.assertIsInstance(race_info, dict)
-        self.assertIsInstance(result_list, list)
-        self.assertGreater(len(race_info), 0)
-        self.assertGreater(len(result_list), 0)
+        self.assertIsInstance(self.valid_result_data, dict)
+        self.assertGreater(len(self.valid_result_data), 0)
+        self.assertGreater(len(self.valid_result_data['entry']), 0)
 
     def test_invalid_result_info(self):
         """Test that loading results for an invalid race ID raises an error."""
@@ -48,7 +46,8 @@ class TestResultLoader(unittest.TestCase):
 
     def test_race_info_content(self):
         """Test content of the race info for a valid race ID."""
-        race_info, _ = self.valid_result_data
+        race_info = self.valid_result_data.copy()
+        entry = race_info.pop('entry')
         expected_race_info = {
             'id': '202006030711',
             'race_number': 11,
@@ -72,7 +71,7 @@ class TestResultLoader(unittest.TestCase):
 
     def test_result_list_content(self):
         """Test content of the result list for a valid race ID."""
-        _, result_list = self.valid_result_data
+        entry_list = self.valid_result_data['entry']
         expected_result = {
             'id': '20200603071106',
             'race_id': '202006030711',
@@ -96,11 +95,11 @@ class TestResultLoader(unittest.TestCase):
             'trainer_name': '和田正一',
             'prize': 6639.2
         }
-        self.assertDictEqual(result_list[0], expected_result)
+        self.assertDictEqual(entry_list[0], expected_result)
 
     def test_scratch_result(self):
         """Test a result where the horse was scratched (did not run)."""
-        _, result_list = self.valid_result_data
+        entry_list = self.valid_result_data['entry']
         expected_result = {
             'id': '20200603071109',
             'race_id': '202006030711',
@@ -124,11 +123,11 @@ class TestResultLoader(unittest.TestCase):
             'trainer_name': '石毛善彦',
             'prize': 0
         }
-        self.assertDictEqual(result_list[10], expected_result)
+        self.assertDictEqual(entry_list[10], expected_result)
 
     def test_encoding_issue_race(self):
         """Test that race data with encoding issues is parsed correctly."""
-        race_info, _ = self.encoding_issue_data
+        entry = self.encoding_issue_data.pop('entry')
         expected_race_info = {
             'id': '202209020804',
             'race_number': 4,
@@ -148,11 +147,11 @@ class TestResultLoader(unittest.TestCase):
             'head_count': 18,
             'max_prize': 520.0
         }
-        self.assertDictEqual(race_info, expected_race_info)
+        self.assertDictEqual(self.encoding_issue_data, expected_race_info)
 
     def test_local_race_parsing(self):
         """Test parsing of local race data."""
-        race_info, _ = self.local_race_data
+        entry = self.local_race_data.pop('entry')
         expected_race_info = {
             'id': '202250030808',
             'race_number': 8,
@@ -172,11 +171,11 @@ class TestResultLoader(unittest.TestCase):
             'head_count': 10,
             'max_prize': 60.0
         }
-        self.assertDictEqual(race_info, expected_race_info)
+        self.assertDictEqual(self.local_race_data, expected_race_info)
 
     def test_unexpected_time_format(self):
         """Test parsing of a race with an unexpected time format."""
-        _, result_list = self.unexpected_time_data
+        entry_list = self.unexpected_time_data['entry']
         # Raptime is normal. Origial Raptime is 2:39:30.
         expected_result = {
             'id': '2020C810040407',
@@ -201,7 +200,7 @@ class TestResultLoader(unittest.TestCase):
             'trainer_name': 'ＪＣ．ル',
             'prize': 0.0
         }
-        self.assertDictEqual(result_list[0], expected_result)
+        self.assertDictEqual(entry_list[0], expected_result)
 
 
 if __name__ == '__main__':

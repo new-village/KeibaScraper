@@ -24,11 +24,9 @@ class TestHorseLoader(unittest.TestCase):
 
     def test_valid_horse_info(self):
         """Test that valid horse info is loaded correctly."""
-        horse_info, history_list = self.valid_horse_data
-        self.assertIsInstance(horse_info, dict)
-        self.assertIsInstance(history_list, list)
-        self.assertGreater(len(horse_info), 0)
-        self.assertGreater(len(history_list), 0)
+        self.assertIsInstance(self.valid_horse_data, dict)
+        self.assertGreater(len(self.valid_horse_data), 0)
+        self.assertGreater(len(self.valid_horse_data['entry']), 0)
 
     def test_invalid_horse_info(self):
         """Test that loading an invalid horse ID raises an error."""
@@ -39,7 +37,7 @@ class TestHorseLoader(unittest.TestCase):
 
     def test_jra_race_parsing(self):
         """Test parsing of JRA race history for the horse."""
-        _, history_list = self.valid_horse_data
+        entry_list = self.valid_horse_data['entry']
         expected_history = {
             'id': '20010505081008',
             'horse_id': '1994108729',
@@ -72,12 +70,11 @@ class TestHorseLoader(unittest.TestCase):
             'weight_diff': 0,
             'prize': 3800.0
         }
-        self.assertDictEqual(history_list[1], expected_history)
+        self.assertDictEqual(entry_list[1], expected_history)
 
     def test_overseas_race_parsing(self):
         """Test parsing of overseas race history for the horse."""
-        self.maxDiff = None
-        _, history_list = self.valid_horse_data
+        entry_list = self.valid_horse_data['entry']
         expected_history = {
             'id': '2001G012160509',
             'horse_id': '1994108729',
@@ -110,7 +107,7 @@ class TestHorseLoader(unittest.TestCase):
             'weight_diff': None,
             'prize': 0
         }
-        self.assertDictEqual(history_list[0], expected_history)
+        self.assertDictEqual(entry_list[0], expected_history)
 
 
 if __name__ == '__main__':

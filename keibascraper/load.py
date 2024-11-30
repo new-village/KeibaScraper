@@ -146,8 +146,12 @@ class EntryLoader(BaseLoader):
             (parse_html, ('race', content, self.entity_id)),
             (parse_html, ('entry', content, self.entity_id))
         ]
-        race_info, entry_list = self.parse_with_error_handling(parse_funcs)     
-        return race_info[0], entry_list
+        race_info, entry_list = self.parse_with_error_handling(parse_funcs)
+        
+        # Nesting the data
+        race_info = race_info[0]
+        race_info['entry'] = entry_list
+        return race_info
 
 class OddsLoader(BaseLoader):
     """
@@ -209,7 +213,11 @@ class ResultLoader(BaseLoader):
             (parse_html, ('result', content, self.entity_id))
         ]
         race_info, result_list = self.parse_with_error_handling(parse_funcs)
-        return race_info[0], result_list
+
+        # Nesting the data
+        race_info = race_info[0]
+        race_info['entry'] = result_list
+        return race_info
 
 
 class HorseLoader(BaseLoader):
@@ -241,7 +249,11 @@ class HorseLoader(BaseLoader):
             (parse_html, ('history', content, self.entity_id))
         ]
         horse_info, history_list = self.parse_with_error_handling(parse_funcs)
-        return horse_info[0], history_list
+
+        # Nesting the data
+        horse_info = horse_info[0]
+        horse_info['entry'] = history_list
+        return horse_info
 
 
 class CalendarLoader:
