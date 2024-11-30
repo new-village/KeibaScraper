@@ -8,7 +8,6 @@ on:
 
 jobs:
   build-and-deploy:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -24,28 +23,6 @@ jobs:
           python -m pip install -U pip
           python -m pip install -U setuptools build twine wheel
 
-      - name: Bump version
-        id: bump_version
-        run: |
-          # Extract the current version from setup.py
-          current_version=$(grep -oP "version='\K[0-9]+\.[0-9]+\.[0-9]+" setup.py)
-          # Split version into parts
-          IFS='.' read -r major minor patch <<< "$current_version"
-          # Increment the minor version
-          minor=$((minor + 1))
-          # Create the new version string
-          new_version="$major.$minor.$patch"
-          # Update setup.py with the new version
-          sed -i "s/version='$current_version'/version='$new_version'/" setup.py
-          echo "New version: $new_version"
-
-      - name: Commit version bump
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git commit -am "Bump version to ${{ steps.bump_version.outputs.new_version }}"
-          git push
-
       - name: Build package
         run: |
           python -m build
@@ -55,5 +32,6 @@ jobs:
           twine check dist/*
 
       - name: Publish package to PyPI
+        if: github.ref == 'refs/heads/main'
         run: |
           twine upload --skip-existing dist/* -u __token__ -p ${{ secrets.PYPI_API_TOKEN }}
