@@ -25,7 +25,7 @@ class TestHorseLoader(unittest.TestCase):
     def test_valid_horse_info(self):
         """Test that valid horse info is loaded correctly."""
         horse_info, history_list = self.valid_horse_data
-        self.assertIsInstance(horse_info, list)
+        self.assertIsInstance(horse_info, dict)
         self.assertIsInstance(history_list, list)
         self.assertGreater(len(horse_info), 0)
         self.assertGreater(len(history_list), 0)

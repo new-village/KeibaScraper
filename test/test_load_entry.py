@@ -24,7 +24,7 @@ class TestEntryLoader(unittest.TestCase):
     def test_valid_race_info(self):
         """Test that valid race info is loaded correctly."""
         race_info, entry_list = self.valid_race_data
-        self.assertIsInstance(race_info, list)
+        self.assertIsInstance(race_info, dict)
         self.assertIsInstance(entry_list, list)
         self.assertGreater(len(race_info), 0)
         self.assertGreater(len(entry_list), 0)
@@ -57,7 +57,7 @@ class TestEntryLoader(unittest.TestCase):
             'head_count': 16,
             'max_prize': 4300.0
         }
-        self.assertDictEqual(race_info[0], expected_race_info)
+        self.assertDictEqual(race_info, expected_race_info)
 
     def test_entry_list_content(self):
         """Test content of the entry list for a valid race ID."""

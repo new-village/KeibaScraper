@@ -35,7 +35,7 @@ class TestResultLoader(unittest.TestCase):
     def test_valid_result_info(self):
         """Test that valid race results are loaded correctly."""
         race_info, result_list = self.valid_result_data
-        self.assertIsInstance(race_info, list)
+        self.assertIsInstance(race_info, dict)
         self.assertIsInstance(result_list, list)
         self.assertGreater(len(race_info), 0)
         self.assertGreater(len(result_list), 0)
@@ -68,7 +68,7 @@ class TestResultLoader(unittest.TestCase):
             'head_count': 11,
             'max_prize': 6639.2
         }
-        self.assertDictEqual(race_info[0], expected_race_info)
+        self.assertDictEqual(race_info, expected_race_info)
 
     def test_result_list_content(self):
         """Test content of the result list for a valid race ID."""
@@ -148,7 +148,7 @@ class TestResultLoader(unittest.TestCase):
             'head_count': 18,
             'max_prize': 520.0
         }
-        self.assertDictEqual(race_info[0], expected_race_info)
+        self.assertDictEqual(race_info, expected_race_info)
 
     def test_local_race_parsing(self):
         """Test parsing of local race data."""
@@ -172,7 +172,7 @@ class TestResultLoader(unittest.TestCase):
             'head_count': 10,
             'max_prize': 60.0
         }
-        self.assertDictEqual(race_info[0], expected_race_info)
+        self.assertDictEqual(race_info, expected_race_info)
 
     def test_unexpected_time_format(self):
         """Test parsing of a race with an unexpected time format."""

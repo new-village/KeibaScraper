@@ -62,7 +62,7 @@ race_info, entry_list = keibascraper.load("entry", race_id)
 
 # Access race information
 print(race_info)
-# Output: [{'race_id': '202206050811', 'race_name': 'Example Race', ...}]
+# Output: {'race_id': '202206050811', 'race_name': 'Example Race', ...}
 
 # Access entry list
 print(entry_list)
@@ -80,7 +80,7 @@ race_info, result_list = keibascraper.load("result", race_id)
 
 # Access race information
 print(race_info)
-# Output: [{'race_id': '202206050811', 'race_name': 'Example Race', ...}]
+# Output: {'race_id': '202206050811', 'race_name': 'Example Race', ...}
 
 # Access result list
 print(result_list)
@@ -112,7 +112,7 @@ horse_info, history_list = keibascraper.load("horse", horse_id)
 
 # Access horse information
 print(horse_info)
-# Output: [{'horse_id': '2010101234', 'horse_name': 'Horse A', 'father_name': 'Sire A', ...}]
+# Output: {'horse_id': '2010101234', 'horse_name': 'Horse A', 'father_name': 'Sire A', ...}
 
 # Access race history
 print(history_list)
