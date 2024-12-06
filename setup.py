@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='keibascraper',
-    version='3.0.0',
+    version='3.1.0',
     author='new-village',
     url='https://github.com/new-village/KeibaScraper',
     description='keibascraper is a simple scraping library for netkeiba.com',

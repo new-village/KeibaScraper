@@ -110,6 +110,16 @@ for race_id in race_ids:
     # Process the data as needed
 ```
 
+### Create table query generation for SQLite
+
+The `create_table_sql` function generates an SQL query string for creating a table in an SQLite database. The table structure is dynamically defined based on the configuration file corresponding to the provided `data_type` like `race`, `entry`, `result` and etc. This function ensures that the table is created only if it does not already exist and assigns a primary key to the first column.
+
+```python
+>>> import keibascraper
+>>> query = keibascraper.create_table_sql("entry")
+>>> print(query)
+CREATE TABLE IF NOT EXISTS entry (bracket text, ... weight_diff integer);
+```
 
 ## API Reference
 
