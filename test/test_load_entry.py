@@ -11,32 +11,33 @@ class TestEntryLoader(unittest.TestCase):
     def setUpClass(cls):
         # Load a valid race entry
         cls.valid_race_id = '202210040211'
-        cls.valid_race_data = keibascraper.load('entry', cls.valid_race_id)
+        cls.valid_race, cls.valid_entry = keibascraper.load('entry', cls.valid_race_id)
 
         # Load a non-existent race entry
         cls.invalid_race_id = '201206050812'
+        cls.invalid_race_error = None
         try:
-            cls.invalid_race_data = keibascraper.load('entry', cls.invalid_race_id)
+            keibascraper.load('entry', cls.invalid_race_id)
         except RuntimeError as e:
             cls.invalid_race_error = e
 
-    def test_valid_race_info(self):
-        """Test that valid race info is loaded correctly."""
-        self.assertIsInstance(self.valid_race_data, dict)
-        self.assertGreater(len(self.valid_race_data), 0)
-        self.assertGreater(len(self.valid_race_data['entry']), 0)
+    def test_valid_race(self):
+        """Test that valid race info and entry list are loaded correctly."""
+        self.assertIsInstance(self.valid_race, list)
+        self.assertGreater(len(self.valid_race), 0)
 
-    def test_invalid_race_info(self):
+        self.assertIsInstance(self.valid_entry, list)
+        self.assertGreater(len(self.valid_entry), 0)
+
+    def test_invalid_race(self):
         """Test that loading an invalid race ID raises an error."""
         self.assertIsNotNone(self.__class__.invalid_race_error)
         self.assertIsInstance(self.__class__.invalid_race_error, RuntimeError)
-        self.assertIn(f"No valid data found", str(self.__class__.invalid_race_error))
+        self.assertIn("No valid data found", str(self.__class__.invalid_race_error))
 
     def test_race_info_content(self):
         """Test content of the race info for a valid race ID."""
-        race_info = self.valid_race_data.copy()
-        entry = race_info.pop('entry')
-        expected_race_info = {
+        expected_race = {
             'id': '202210040211',
             'race_number': 11,
             'race_name': '小倉記念',
@@ -55,11 +56,10 @@ class TestEntryLoader(unittest.TestCase):
             'head_count': 16,
             'max_prize': 4300.0
         }
-        self.assertDictEqual(race_info, expected_race_info)
+        self.assertDictEqual(self.valid_race[0], expected_race)
 
     def test_entry_list_content(self):
         """Test content of the entry list for a valid race ID."""
-        entry_list = self.valid_race_data['entry']
         expected_entry = {
             'id': '20221004021102',
             'race_id': '202210040211',
@@ -77,11 +77,10 @@ class TestEntryLoader(unittest.TestCase):
             'weight': 424,
             'weight_diff': -2
         }
-        self.assertDictEqual(entry_list[1], expected_entry)
+        self.assertDictEqual(self.valid_entry[1], expected_entry)
 
     def test_scratch_entry(self):
         """Test an entry where the horse was scratched (did not run)."""
-        entry_list = self.valid_race_data['entry']
         expected_entry = {
             'id': '20221004021108',
             'race_id': '202210040211',
@@ -99,7 +98,7 @@ class TestEntryLoader(unittest.TestCase):
             'weight': None,
             'weight_diff': None
         }
-        self.assertDictEqual(entry_list[7], expected_entry)
+        self.assertDictEqual(self.valid_entry[7], expected_entry)
 
 
 if __name__ == '__main__':

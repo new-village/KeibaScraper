@@ -11,16 +11,6 @@ from keibascraper.parse import parse_html, parse_json
 def load(data_type, entity_id):
     """
     Load data from netkeiba.com based on the specified data type and entity ID.
-
-    Parameters:
-        data_type (str): Type of data to load ('entry', 'odds', 'result', 'horse').
-        entity_id (str): Identifier for the data entity (e.g., race ID, horse ID).
-
-    Returns:
-        tuple or list: Parsed data corresponding to the data type.
-
-    Raises:
-        ValueError: If an unsupported data type is provided.
     """
     loaders = {
         'entry': EntryLoader,
@@ -37,52 +27,19 @@ def load(data_type, entity_id):
     return loader.load()
 
 def race_list(year:int, month:int) -> list:
-    """ collect arguments race id.
-    :param year: target year
-    :param month: target month
-    """
+    """ collect arguments race id. """
     calc = CalendarLoader(year, month)
     return calc.load()
 
 class BaseLoader:
-    """
-    Base loader class providing common functionality for all loaders.
-
-    Attributes:
-        entity_id (str): Identifier for the data entity.
-    """
-
     def __init__(self, entity_id):
         self.entity_id = entity_id
 
     def create_url(self, base_url):
-        """
-        Generate the full URL by replacing placeholders with actual entity IDs.
-
-        Parameters:
-            base_url (str): Base URL containing placeholders.
-
-        Returns:
-            str: URL with placeholders replaced by entity IDs.
-        """
         return base_url.replace('{ID}', self.entity_id)
 
     def load_contents(self, url):
-        """
-        Fetch content from the given URL while respecting rate limits.
-
-        Parameters:
-            url (str): URL to fetch data from.
-
-        Returns:
-            str: Response text from the URL.
-
-        Raises:
-            RuntimeError: If the request fails due to network issues or invalid URLs.
-        """
-        # Wait for rate limiting (2-3 seconds)
         time.sleep(random.uniform(2, 3))
-        # Set User-Agent header
         headers = {
             'User-Agent': (
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
@@ -100,18 +57,6 @@ class BaseLoader:
             raise RuntimeError(f"Failed to load contents from {url}") from e
 
     def parse_with_error_handling(self, parse_funcs):
-        """
-        Parse content using provided parsing functions with error handling.
-
-        Parameters:
-            parse_funcs (list): List of tuples containing parse functions and their arguments.
-
-        Returns:
-            list: List of parsed data.
-
-        Raises:
-            RuntimeError: If parsing fails.
-        """
         results = []
         for parse_func, args in parse_funcs:
             try:
@@ -124,57 +69,24 @@ class BaseLoader:
 
 class EntryLoader(BaseLoader):
     def load(self):
-        """
-        Load entry data including race information and entry list.
-
-        Returns:
-            tuple: A tuple containing race info and entry list dictionaries.
-
-        Raises:
-            RuntimeError: If no valid data is found.
-        """
         config = load_config('entry')
         url = self.create_url(config['property']['url'])
         content = self.load_contents(url)
-        try:
-            race_info = parse_html('race', content, self.entity_id)
-            entry_list = parse_html('entry', content, self.entity_id)
-        except RuntimeError as e:
-            raise RuntimeError(f"Failed to load entry data for race ID {self.entity_id}: {e}") from e
-        
+
         parse_funcs = [
             (parse_html, ('race', content, self.entity_id)),
             (parse_html, ('entry', content, self.entity_id))
         ]
-        race_info, entry_list = self.parse_with_error_handling(parse_funcs)
-        
-        # Nesting the data
-        race_info = race_info[0]
-        race_info['entry'] = entry_list
-        return race_info
+        race, entry = self.parse_with_error_handling(parse_funcs)
+
+        return race, entry
+
 
 class OddsLoader(BaseLoader):
-    """
-    Loader for fetching odds data.
-    """
-
     def load(self):
-        """
-        Load odds data.
-
-        Returns:
-            list: A list of dictionaries containing odds information.
-
-        Raises:
-            RuntimeError: If no valid data is found.
-        """
         config = load_config('odds')
         url = self.create_url(config['property']['url'])
         content = self.load_contents(url)
-        try:
-            odds_data = parse_json('odds', content, self.entity_id)
-        except RuntimeError as e:
-            raise RuntimeError(f"Failed to load odds data for race ID {self.entity_id}: {e}") from e
 
         parse_funcs = [
             (parse_json, ('odds', content, self.entity_id))
@@ -184,116 +96,47 @@ class OddsLoader(BaseLoader):
 
 
 class ResultLoader(BaseLoader):
-    """
-    Loader for fetching race results.
-    """
-
     def load(self):
-        """
-        Load race results including race information and result list.
-
-        Returns:
-            tuple: A tuple containing race info and result list dictionaries.
-
-        Raises:
-            RuntimeError: If no valid data is found.
-        """
         config = load_config('result')
         url = self.create_url(config['property']['url'])
         content = self.load_contents(url)
-
-        try:
-            race_info = parse_html('race_db', content, self.entity_id)
-            result_list = parse_html('result', content, self.entity_id)
-        except RuntimeError as e:
-            raise RuntimeError(f"Failed to load result data for race ID {self.entity_id}: {e}") from e
 
         parse_funcs = [
             (parse_html, ('race_db', content, self.entity_id)),
             (parse_html, ('result', content, self.entity_id))
         ]
-        race_info, result_list = self.parse_with_error_handling(parse_funcs)
+        race, entry = self.parse_with_error_handling(parse_funcs)
 
-        # Nesting the data
-        race_info = race_info[0]
-        race_info['entry'] = result_list
-        return race_info
+        return race, entry
 
 
 class HorseLoader(BaseLoader):
-    """
-    Loader for fetching horse data.
-    """
-
     def load(self):
-        """
-        Load horse data including horse information and history.
-
-        Returns:
-            tuple: A tuple containing horse info and history list dictionaries.
-
-        Raises:
-            RuntimeError: If no valid data is found.
-        """
         config = load_config('horse')
         url = self.create_url(config['property']['url'])
         content = self.load_contents(url)
-        try:
-            horse_info = parse_html('horse', content, self.entity_id)
-            history_list = parse_html('history', content, self.entity_id)
-        except RuntimeError as e:
-            raise RuntimeError(f"Failed to load horse data for horse ID {self.entity_id}: {e}") from e
 
         parse_funcs = [
             (parse_html, ('horse', content, self.entity_id)),
             (parse_html, ('history', content, self.entity_id))
         ]
-        horse_info, history_list = self.parse_with_error_handling(parse_funcs)
+        horse, history = self.parse_with_error_handling(parse_funcs)
 
-        # Nesting the data
-        horse_info = horse_info[0]
-        horse_info['entry'] = history_list
-        return horse_info
+        return horse, history
 
 
 class CalendarLoader:
-    """
-    Loader for fetching calendar data.
-
-    Attributes:
-        year (int): The year for which to load the calendar.
-        month (int): The month for which to load the calendar.
-    """
-
     def __init__(self, year, month):
         self.year = year
         self.month = month
 
     def load(self):
-        """
-        Load calendar data for the specified year and month.
-
-        Returns:
-            list: A list of race IDs extracted from the calendar.
-        """
         url = f"https://keiba.yahoo.co.jp/schedule/list/{self.year}/?month={self.month}"
         content = self.load_contents(url)
         race_ids = parse_html('cal', content)
         return self.expand_race_ids(race_ids)
 
     def load_contents(self, url):
-        """
-        Fetch calendar content from the given URL while respecting rate limits.
-
-        Parameters:
-            url (str): URL to fetch calendar data from.
-
-        Returns:
-            str: Response text from the URL.
-
-        Raises:
-            RuntimeError: If the request fails due to network issues or invalid URLs.
-        """
         try:
             response = requests.get(url)
             response.encoding = 'EUC-JP'
@@ -302,21 +145,7 @@ class CalendarLoader:
             raise RuntimeError(f"Failed to load contents from {url}") from e
     
     def expand_race_ids(self, input_data):
-        """
-        Expands race_ids based on the specified transformation rules.
-        
-        - If race_id is 8 digits:
-            - Add the prefix '20'
-            - Append '01' through '12' to generate 12 race_ids
-        
-        Parameters:
-            input_data (list): [{'race_id': '23060101'}, {'race_id': '23070101'}, ...]
-        
-        Returns:
-            list: List of transformed race_ids
-        """
         race_ids = []
-        
         for item in input_data:
             race_id = item.get('race_id')
             if not race_id:
@@ -324,12 +153,10 @@ class CalendarLoader:
                 continue
             
             if len(race_id) == 8:
-                base_id = '20' + race_id  # Add prefix '20'
-                # Append '01' through '12' to generate 12 race_ids
+                base_id = '20' + race_id
                 expanded_ids = [f"{base_id}{str(i).zfill(2)}" for i in range(1, 13)]
                 race_ids.extend(expanded_ids)
             else:
                 print(f"Warning: race_id '{race_id}' has invalid length ({len(race_id)}). Skipping.")
         
         return race_ids
-

@@ -54,57 +54,44 @@ To use keibascraper, import the library and use the `load` function to fetch and
 ### Loading Entry Data (出走データ)
 
 ```python
-import keibascraper
+>>> import keibascraper
+>>> race, entry = keibascraper.load("entry", "201206050810")
+>>> print(race)
+[{'race_id': '201206050810', 'race_number': 10, 'race_name': '有馬記念', ... }]
+>>> print(entry)
+[{'bracket': 7, 'horse_number': 13, 'horse_name': 'ゴールドシップ', ...}, {...}, ...]
 
-# Load entry data for a specific race ID
-race_id = "202206050811"  # Example race ID
-race_info = keibascraper.load("entry", race_id)
-
-# Access race information
-print(race_info)
-# Output: {'race_id': '202206050811', 'race_name': 'Example Race', ... 'entry': [{'horse_number': 1, 'horse_name': 'Horse A', ...}, {...}, ...]}
 ```
 
 ### Loading Result Data (結果データ)
 
 ```python
-import keibascraper
-
-# Load result data for a specific race ID
-race_id = "202206050811"  # Example race ID
-race_info = keibascraper.load("result", race_id)
-
-# Access race information
-print(race_info)
-# Output: {'race_id': '202206050811', 'race_name': 'Example Race', ... 'entry': [{'rank': 1, 'horse_name': 'Horse A', 'rap_time': 120.5, ...}, {...}, ...]}
+>>> import keibascraper
+>>> race, entry = keibascraper.load("result", "201206050810")
+>>> print(race)
+[{'race_id': '201206050810', 'race_number': 10, 'race_name': '有馬記念', ... }]
+>>> print(entry)
+[{'rank': 1, 'horse_name': 'ゴールドシップ', 'rap_time': 151.9,...}, {...}, ...]
 ```
 
 ### Loading Odds Data (オッズデータ)
 
 ```python
-import keibascraper
-
-# Load odds data for a specific race ID
-race_id = "202206050811"  # Example race ID
-odds_data = keibascraper.load("odds", race_id)
-
-# Access odds information
-print(odds_data)
-# Output: [{'horse_number': 1, 'win': 3.5, 'show_min': 1.2, 'show_max': 1.5, ...}, {...}, ...]
+>>> import keibascraper
+>>> odds = keibascraper.load("odds", "201206050810")
+>>> print(odds)
+[{'horse_number': 13, 'win': 2.7, 'show_min': 1.3, 'show_max': 1.5, ...}, {...}, ...]
 ```
 
 ### Loading Horse Data (血統データ/出走履歴データ)
 
 ```python
-import keibascraper
-
-# Load horse data for a specific horse ID
-horse_id = "2010101234"  # Example horse ID
-horse_info = keibascraper.load("horse", horse_id)
-
-# Access horse information
-print(horse_info)
-# Output: {'horse_id': '2010101234', 'horse_name': 'Horse A', 'father_name': 'Sire A', ... 'entry': [{'race_date': '2022-06-05', 'race_name': 'Example Race', 'rank': 1, ...}, {...}, ...]}
+>>> import keibascraper
+>>> horse, result = keibascraper.load("horse", "2009102739")
+>>> print(horse)
+[{'horse_id': '2009102739', 'father_name': 'ステイゴールド', ... }]
+>>> print(result)
+[{'race_date': '20151227', 'race_name': '有馬記念', 'rank': 8, ...}, {...}, ...]
 ```
 
 ### Bulk Data Loading
@@ -137,9 +124,9 @@ keibascraper.load(data_type, entity_id)
   - `data_type` (str): Type of data to load. Supported types are `'entry'`, `'result'`, `'odds'`, and `'horse'`.
   - `entity_id` (str): Identifier for the data entity (e.g., race ID, horse ID).
 - **Returns**:
-  - For `'entry'` and `'result'`: Returns a dict `{race_info, [data_list]}`.
-  - For `'odds'`: Returns a list `odds_data`.
-  - For `'horse'`: Returns a dict `{horse_info, [history_list]}`.
+  - For `'entry'` and `'result'`: Returns a list of `[{race}]` and list of `[{entry1}, {entry2}...]`.
+  - For `'odds'`: Returns a list of `[{odds1}, {odds2}...]`.
+  - For `'horse'`: Returns a list of `[{horse}]` and list of `[{result1}, {result2}...]`.
 - **Raises**:
   - `ValueError`: If an unsupported data type is provided.
   - `RuntimeError`: If data loading or parsing fails.

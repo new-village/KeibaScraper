@@ -12,23 +12,26 @@ class TestHorseLoader(unittest.TestCase):
     def setUpClass(cls):
         # Load a valid horse
         cls.valid_horse_id = '1994108729'
-        cls.valid_horse_data = keibascraper.load('horse', cls.valid_horse_id)
+        cls.valid_horse, cls.valid_result = keibascraper.load('horse', cls.valid_horse_id)
 
         # Load a non-existent horse
         cls.invalid_horse_id = '9999102739'
+        cls.invalid_horse_error = None
         try:
-            cls.invalid_horse_data = keibascraper.load('horse', cls.invalid_horse_id)
+            keibascraper.load('horse', cls.invalid_horse_id)
         except RuntimeError as e:
             print(e)
             cls.invalid_horse_error = e
 
-    def test_valid_horse_info(self):
-        """Test that valid horse info is loaded correctly."""
-        self.assertIsInstance(self.valid_horse_data, dict)
-        self.assertGreater(len(self.valid_horse_data), 0)
-        self.assertGreater(len(self.valid_horse_data['entry']), 0)
+    def test_valid_horse(self):
+        """Test that valid horse info and entry (history) list are loaded correctly."""
+        self.assertIsInstance(self.valid_horse, list)
+        self.assertGreater(len(self.valid_horse), 0)
 
-    def test_invalid_horse_info(self):
+        self.assertIsInstance(self.valid_result, list)
+        self.assertGreater(len(self.valid_result), 0)
+
+    def test_invalid_horse(self):
         """Test that loading an invalid horse ID raises an error."""
         self.assertTrue(hasattr(self.__class__, 'invalid_horse_error'), "invalid_horse_error 属性が定義されていません。")
         self.assertIsNotNone(self.__class__.invalid_horse_error)
@@ -37,7 +40,6 @@ class TestHorseLoader(unittest.TestCase):
 
     def test_jra_race_parsing(self):
         """Test parsing of JRA race history for the horse."""
-        entry_list = self.valid_horse_data['entry']
         expected_history = {
             'id': '20010505081008',
             'horse_id': '1994108729',
@@ -70,11 +72,10 @@ class TestHorseLoader(unittest.TestCase):
             'weight_diff': 0,
             'prize': 3800.0
         }
-        self.assertDictEqual(entry_list[1], expected_history)
+        self.assertDictEqual(self.valid_result[1], expected_history)
 
     def test_overseas_race_parsing(self):
         """Test parsing of overseas race history for the horse."""
-        entry_list = self.valid_horse_data['entry']
         expected_history = {
             'id': '2001G012160509',
             'horse_id': '1994108729',
@@ -107,7 +108,7 @@ class TestHorseLoader(unittest.TestCase):
             'weight_diff': None,
             'prize': 0
         }
-        self.assertDictEqual(entry_list[0], expected_history)
+        self.assertDictEqual(self.valid_result[0], expected_history)
 
 
 if __name__ == '__main__':
