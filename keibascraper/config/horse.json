@@ -3,8 +3,8 @@
         "entry": "horse",
         "url": "https://db.netkeiba.com/horse/{ID}",
         "mode": "html",
-        "selector": "table.blood_table",
-        "validator": "div.horse_title"
+        "selector": "div.db_main_deta",
+        "validator": "div.db_main_deta"
     },
     "columns": [
         {
@@ -16,81 +16,81 @@
         },{
             "col_name" : "father_id",
             "alias" : "父馬ID",
-            "selector" : "table tr:nth-of-type(1) td:nth-of-type(1) a",
+            "selector" : "table.blood_table tr:nth-of-type(1) > td.b_ml[rowspan='2'] > a",
             "pre_func": {"name": "get_url", "args": ["father_id"]},
             "var_type" : "text",
             "reg" : "/horse/ped/(\\w+)/"
         },{
             "col_name" : "father_name",
             "alias": "父馬名",
-            "selector" : "table tr:nth-of-type(1) td:nth-of-type(1)",
+            "selector" : "table.blood_table tr:nth-of-type(1) > td.b_ml[rowspan='2'] > a",
             "var_type" : "text",
-            "reg" : "\\n(\\D+)\\n"
+            "reg" : ".+"
         },{
             "col_name" : "mother_id",
             "alias" : "母馬ID",
-            "selector" : "table tr:nth-of-type(3) td:nth-of-type(1) a",
+            "selector" : "table.blood_table tr:nth-of-type(3) > td.b_fml[rowspan='2'] > a",
             "pre_func": {"name": "get_url", "args": ["mother_id"]},
             "var_type" : "text",
             "reg" : "/horse/ped/(\\w+)/"
         },{
             "col_name" : "mother_name",
             "alias": "母馬名",
-            "selector" : "table tr:nth-of-type(3) td:nth-of-type(1)",
+            "selector" : "table.blood_table tr:nth-of-type(3) > td.b_fml[rowspan='2'] > a",
             "var_type" : "text",
-            "reg" : "\\n(\\D+)\\n"
+            "reg" : ".+"
         },{
             "col_name" : "f_father_id",
             "alias" : "父父馬ID",
-            "selector" : "table tr:nth-of-type(1) td:nth-of-type(2) a",
+            "selector" : "table.blood_table tr:nth-of-type(1) > td.b_ml:not([rowspan]) > a",
             "pre_func": {"name": "get_url", "args": ["f_father_id"]},
             "var_type" : "text",
             "reg" : "/horse/ped/(\\w+)/"
         },{
             "col_name" : "f_father_name",
             "alias": "父父馬名",
-            "selector" : "table tr:nth-of-type(1) td:nth-of-type(2)",
+            "selector" : "table.blood_table tr:nth-of-type(1) > td.b_ml:not([rowspan]) > a",
             "var_type" : "text",
-            "reg" : "\\n(\\D+)\\n"
+            "reg" : ".+"
         },{
             "col_name" : "f_mother_id",
             "alias" : "父母馬ID",
-            "selector" : "table tr:nth-of-type(2) td:nth-of-type(1) a",
+            "selector" : "table.blood_table tr:nth-of-type(2) > td.b_fml > a",
             "pre_func": {"name": "get_url", "args": ["f_mother_id"]},
             "var_type" : "text",
             "reg" : "/horse/ped/(\\w+)/"
         },{
             "col_name" : "f_mother_name",
             "alias": "父母馬名",
-            "selector" : "table tr:nth-of-type(2) td:nth-of-type(1)",
+            "selector" : "table.blood_table tr:nth-of-type(2) > td.b_fml > a",
             "var_type" : "text",
-            "reg" : "\\n(\\D+)\\n"
+            "reg" : ".+"
         },{
             "col_name" : "m_father_id",
             "alias" : "母父馬ID",
-            "selector" : "table tr:nth-of-type(3) td:nth-of-type(2) a",
+            "selector" : "table.blood_table tr:nth-of-type(3) > td.b_ml:not([rowspan]) > a",
             "pre_func": {"name": "get_url", "args": ["m_father_id"]},
             "var_type" : "text",
             "reg" : "/horse/ped/(\\w+)/"
         },{
             "col_name" : "m_father_name",
             "alias": "母父馬名",
-            "selector" : "table tr:nth-of-type(3) td:nth-of-type(2)",
+            "selector" : "table.blood_table tr:nth-of-type(3) > td.b_ml:not([rowspan]) > a",
             "var_type" : "text",
-            "reg" : "\\n(\\D+)\\n"
+            "reg" : ".+"
         },{
             "col_name" : "m_mother_id",
             "alias" : "母母馬ID",
-            "selector" : "table tr:nth-of-type(4) td:nth-of-type(1) a",
+            "selector" : "table.blood_table tr:nth-of-type(4) > td.b_fml > a",
             "pre_func": {"name": "get_url", "args": ["m_mother_id"]},
             "var_type" : "text",
             "reg" : "/horse/ped/(\\w+)/"
         },{
             "col_name" : "m_mother_name",
             "alias": "母母馬名",
-            "selector" : "table tr:nth-of-type(4) td:nth-of-type(1)",
+            "selector" : "table.blood_table tr:nth-of-type(4) > td.b_fml > a",
             "var_type" : "text",
-            "reg" : "\\n(\\D+)\\n"
+            "reg" : ".+"
         }
     ]
 }

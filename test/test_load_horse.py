@@ -15,7 +15,7 @@ class TestHorseLoader(unittest.TestCase):
         cls.valid_horse, cls.valid_result = keibascraper.load('horse', cls.valid_horse_id)
 
         # Load a non-existent horse
-        cls.invalid_horse_id = '9999102739'
+        cls.invalid_horse_id = '2023104846'
         cls.invalid_horse_error = None
         try:
             keibascraper.load('horse', cls.invalid_horse_id)
@@ -37,6 +37,26 @@ class TestHorseLoader(unittest.TestCase):
         self.assertIsNotNone(self.__class__.invalid_horse_error)
         self.assertIsInstance(self.__class__.invalid_horse_error, RuntimeError)
         self.assertIn("No valid data found", str(self.__class__.invalid_horse_error))
+
+    def test_horse_parsing(self):
+        self.maxDiff = None
+        """Test parsing of horse data."""
+        expected_horse = {
+            'id': '1994108729',
+            'father_id': '000a00033a',
+            'father_name': 'サンデーサイレンス',
+            'mother_id': '1988107344',
+            'mother_name': 'ゴールデンサッシュ',
+            'f_father_id':'000a0012bf', 
+            'f_father_name': 'Halo', 
+            'f_mother_id': '000a008c1e', 
+            'f_mother_name': 'Wishing Well', 
+            'm_father_id': '000a0000ed', 
+            'm_father_name': 'ディクタス', 
+            'm_mother_id': '1979101752', 
+            'm_mother_name': 'ダイナサッシュ'
+        }
+        self.assertDictEqual(self.valid_horse[0], expected_horse)
 
     def test_jra_race_parsing(self):
         """Test parsing of JRA race history for the horse."""
