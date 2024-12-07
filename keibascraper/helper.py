@@ -248,23 +248,34 @@ def load_config(data_type):
 
 
 def create_table_sql(data_type=None):
-    """ The function generate create table SQL strings based on SQLite3 by config file.
-    :param data_type: Data Type is identifier of data types such as ENTRY, ODDS, RACE and RESULT.
+    """ 
+    Generates a CREATE TABLE SQL statement for SQLite3 based on the configuration file.
+    
+    :param data_type: A string that identifies the data type such as ENTRY, ODDS, RACE, RESULT, etc.
+    :return: A string containing the CREATE TABLE SQL statement.
     """
-    # Validating Arguments
+    # Validate arguments
     if data_type is None:
-        raise SystemExit("There is no race_id in HTML")
+        raise SystemExit("Data type is not specified.")
 
-    # load config file
-    keys = [key["col_name"] for key in load_config(data_type)["columns"]]
-    types = [tp["var_type"] for tp in load_config(data_type)["columns"]]
-    # Create comma separated strings
-    cols = [k + ' ' + v for k, v in zip(keys, types)]
-    # Add PRIMARY KEY string to first column
-    cols[0] = cols[0] + " PRIMARY KEY"
-    cols = ", ".join(cols)
+    # Load configuration file
+    columns = load_config(data_type)["columns"]
+    keys = [column["col_name"] for column in columns]
+    types = [column["var_type"] for column in columns]
 
-    return f"CREATE TABLE IF NOT EXISTS {data_type} ({cols});"
+    # Create column definitions
+    cols = []
+    for k, v in zip(keys, types):
+        col_def = f"{k} {v}"
+        # Add "PRIMARY KEY" string if the column name is "id"
+        if k.lower() == "id":
+            col_def += " PRIMARY KEY"
+        cols.append(col_def)
+
+    cols_str = ", ".join(cols)
+
+    return f"CREATE TABLE IF NOT EXISTS {data_type} ({cols_str});"
+
 
 def create_index_sql(data_type=None):
     """ The function generate create index SQL strings based on SQLite3 by config file.

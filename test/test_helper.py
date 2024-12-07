@@ -10,10 +10,11 @@ class TestHelperSQL(unittest.TestCase):
         # モックされたJSONデータ
         mock_load_config.return_value = {
             "columns": [
-                {"col_name": "race_id", "var_type": "text"},
                 {"col_name": "bracket", "var_type": "integer"},
                 {"col_name": "horse_number", "var_type": "integer"},
-                {"col_name": "horse_name", "var_type": "text"}
+                {"col_name": "horse_name", "var_type": "text"},
+                {"col_name": "id", "var_type": "text"},
+
             ]
         }
 
@@ -23,10 +24,10 @@ class TestHelperSQL(unittest.TestCase):
         # 期待されるSQL
         expected_sql = (
             "CREATE TABLE IF NOT EXISTS entry ("
-            "race_id text PRIMARY KEY, "
             "bracket integer, "
             "horse_number integer, "
-            "horse_name text);"
+            "horse_name text, "
+            "id text PRIMARY KEY);"            
         )
 
         # 検証
