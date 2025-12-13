@@ -25,11 +25,15 @@ def formatter(pattern, target, var_type):
     if not match:
         return None  # Return None if no match is found
 
-    # Determine whether to use a capture group or the entire match
+    # Determine whether to use a capture group or the entire match.
+    # If multiple capture groups exist, pick the first non-empty one.
     if match.groups():
-        value = match.group(1)  # Use the first capture group if available
+        value = next((g for g in match.groups() if g), None)
     else:
         value = match.group(0)  # Use the entire matched string if no capture groups
+
+    if value is None:
+        return None
 
     # Remove commas for numerical conversions to handle numbers like "1,234"
     if var_type in ['integer', 'real']:

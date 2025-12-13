@@ -25,7 +25,7 @@
             "alias": "父馬名",
             "selector": "table.blood_table tr:nth-of-type(1) > td:nth-of-type(1) > a[href*='/horse/']:not([href*='/horse/ped/']):not([href*='/horse/sire/']):not([href*='/horse/mare/'])",
             "var_type": "text",
-            "reg": "^([^A-Za-z(（]+)"
+            "reg": "^(?:([^\\x00-\\x7F]+).*)$|^(.+?)(?:\\(|（|$)"
         },{
             "col_name": "mother_id",
             "alias": "母馬ID",
@@ -38,7 +38,7 @@
             "alias": "母馬名",
             "selector": "table.blood_table tr:nth-of-type(17) > td:nth-of-type(1) > a[href*='/horse/']:not([href*='/horse/ped/']):not([href*='/horse/sire/']):not([href*='/horse/mare/'])",
             "var_type": "text",
-            "reg": ".+"
+            "reg": "^(?:([^\\x00-\\x7F]+).*)$|^(.+?)(?:\\(|（|$)"
         },{
             "col_name": "f_father_id",
             "alias": "父父馬ID",
@@ -51,7 +51,7 @@
             "alias": "父父馬名",
             "selector": "table.blood_table tr:nth-of-type(1) > td:nth-of-type(2) > a[href*='/horse/']:not([href*='/horse/ped/']):not([href*='/horse/sire/']):not([href*='/horse/mare/'])",
             "var_type": "text",
-            "reg": ".+"
+            "reg": "^(?:([^\\x00-\\x7F]+).*)$|^(.+?)(?:\\(|（|$)"
         },{
             "col_name": "f_mother_id",
             "alias": "父母馬ID",
@@ -64,7 +64,7 @@
             "alias": "父母馬名",
             "selector": "table.blood_table tr:nth-of-type(9) > td:nth-of-type(1) > a[href*='/horse/']:not([href*='/horse/ped/']):not([href*='/horse/sire/']):not([href*='/horse/mare/'])",
             "var_type": "text",
-            "reg": ".+"
+            "reg": "^(?:([^\\x00-\\x7F]+).*)$|^(.+?)(?:\\(|（|$)"
         },{
             "col_name": "m_father_id",
             "alias": "母父馬ID",
@@ -77,7 +77,7 @@
             "alias": "母父馬名",
             "selector": "table.blood_table tr:nth-of-type(17) > td:nth-of-type(2) > a[href*='/horse/']:not([href*='/horse/ped/']):not([href*='/horse/sire/']):not([href*='/horse/mare/'])",
             "var_type": "text",
-            "reg": "^([^A-Za-z(（]+)"
+            "reg": "^(?:([^\\x00-\\x7F]+).*)$|^(.+?)(?:\\(|（|$)"
         },{
             "col_name": "m_mother_id",
             "alias": "母母馬ID",
@@ -90,7 +90,7 @@
             "alias": "母母馬名",
             "selector": "table.blood_table tr:nth-of-type(25) > td:nth-of-type(1) > a[href*='/horse/']:not([href*='/horse/ped/']):not([href*='/horse/sire/']):not([href*='/horse/mare/'])",
             "var_type": "text",
-            "reg": ".+"
+            "reg": "^(?:([^\\x00-\\x7F]+).*)$|^(.+?)(?:\\(|（|$)"
         }
     ]
 }
