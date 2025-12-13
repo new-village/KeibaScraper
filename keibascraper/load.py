@@ -45,13 +45,14 @@ class BaseLoader:
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
                 'AppleWebKit/537.36 (KHTML, like Gecko) '
                 'Chrome/58.0.3029.110 Safari/537.3'
-            )
+            ),
+            'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
         }
 
         try:
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=headers, timeout=20)
             response.raise_for_status()
-            response.encoding = 'EUC-JP'
+            response.encoding = response.apparent_encoding
             return response.text
         except requests.RequestException as e:
             raise RuntimeError(f"Failed to load contents from {url}") from e
@@ -112,13 +113,17 @@ class ResultLoader(BaseLoader):
 
 class HorseLoader(BaseLoader):
     def load(self):
-        config = load_config('horse')
-        url = self.create_url(config['property']['url'])
-        content = self.load_contents(url)
+        horse_config = load_config('horse')
+        horse_url = self.create_url(horse_config['property']['url'])
+        horse_content = self.load_contents(horse_url)
+
+        history_config = load_config('history')
+        history_url = self.create_url(history_config['property']['url'])
+        history_content = self.load_contents(history_url)
 
         parse_funcs = [
-            (parse_html, ('horse', content, self.entity_id)),
-            (parse_html, ('history', content, self.entity_id))
+            (parse_html, ('horse', horse_content, self.entity_id)),
+            (parse_html, ('history', history_content, self.entity_id))
         ]
         horse, history = self.parse_with_error_handling(parse_funcs)
 
@@ -131,15 +136,24 @@ class CalendarLoader:
         self.month = month
 
     def load(self):
-        url = f"https://keiba.yahoo.co.jp/schedule/list/{self.year}/?month={self.month}"
+        url = f"https://sports.yahoo.co.jp/keiba/schedule/monthly?year={self.year}&month={self.month}"
         content = self.load_contents(url)
         race_ids = parse_html('cal', content)
         return self.expand_race_ids(race_ids)
 
     def load_contents(self, url):
         try:
-            response = requests.get(url)
-            response.encoding = 'EUC-JP'
+            headers = {
+                'User-Agent': (
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                    'AppleWebKit/537.36 (KHTML, like Gecko) '
+                    'Chrome/58.0.3029.110 Safari/537.3'
+                ),
+                'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+            }
+            response = requests.get(url, headers=headers, timeout=20)
+            response.raise_for_status()
+            response.encoding = response.apparent_encoding
             return response.text
         except requests.RequestException as e:
             raise RuntimeError(f"Failed to load contents from {url}") from e

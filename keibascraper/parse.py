@@ -74,7 +74,9 @@ class BaseParser:
         value = record.get(col['col_name'])
         if 'pre_func' in col:
             func_name = col['pre_func']['name']
-            args = [record[arg] for arg in col['pre_func']['args']]
+            args = [record.get(arg) for arg in col['pre_func']['args']]
+            if any(arg is None for arg in args):
+                return None
             func = globals().get(func_name)
             if not func:
                 raise ValueError(f"Function {func_name} is not defined.")
@@ -97,7 +99,7 @@ class BaseParser:
         value = record.get(col['col_name'])
         if 'post_func' in col:
             func_name = col['post_func']['name']
-            args = [record[arg] for arg in col['post_func']['args']]
+            args = [record.get(arg) for arg in col['post_func']['args']]
             func = globals().get(func_name)
             if not func:
                 raise ValueError(f"Function {func_name} is not defined.")
@@ -179,7 +181,23 @@ class HTMLParser(BaseParser):
                 record[col_name] = self.add_entity_id(col, record)
                 record[col_name] = self.apply_post_func(col, record)
 
-            records.append(record)
+            has_real_value = False
+            for col in self.columns:
+                if col.get('selector') == 'null':
+                    continue
+                val = record.get(col['col_name'])
+                if val is None:
+                    continue
+                if isinstance(val, str) and val.strip() == '':
+                    continue
+                has_real_value = True
+                break
+
+            if has_real_value:
+                records.append(record)
+
+        if not records:
+            raise RuntimeError(f"No valid data found for {self.data_type} with ID {self.entity_id}")
         return records
 
     def is_invalid_data(self, soup):
@@ -192,8 +210,12 @@ class HTMLParser(BaseParser):
         Returns:
             bool: True if data is invalid, False otherwise.
         """
-        # Check for a specific error message or missing validator element
-        if soup.find(string="該当するデータはありません") or not soup.select_one(self.validator):
+        # Check for a specific error message or missing validator element.
+        # netkeiba error messages may include extra whitespace or surrounding text,
+        # so match by substring instead of exact string.
+        if soup.find(string=lambda s: isinstance(s, str) and "該当するデータはありません" in s):
+            return True
+        if not soup.select_one(self.validator):
             return True
         return False
 

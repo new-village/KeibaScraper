@@ -1,17 +1,17 @@
 {
     "property": {
         "entry": "history",
-        "url": "https://db.netkeiba.com/horse/{ID}",
+        "url": "https://db.netkeiba.com/horse/result/{ID}/",
         "mode": "html",
         "selector": "table.db_h_race_results tbody tr",
         "validator": "table.db_h_race_results tbody tr"
     },
     "columns": [
         {
-            "col_name": "horse_id", 
+            "col_name": "horse_id",
             "alias": "馬ID",
             "selector": "null",
-            "var_type": "text", 
+            "var_type": "text",
             "index": "entity_id"
         },{
             "col_name": "race_date",
@@ -36,15 +36,15 @@
         },{
             "col_name": "days",
             "alias": "開催日数",
-            "selector" : "td:nth-of-type(2)",
-            "var_type" : "integer",
-            "reg" : "\\d{1}\\D+(\\d{1})"
+            "selector": "td:nth-of-type(2)",
+            "var_type": "integer",
+            "reg": "\\d{1}\\D+(\\d{1})"
         },{
             "col_name": "weather",
             "alias": "天候",
             "selector": "td:nth-of-type(3)",
             "var_type": "text",
-            "reg" : "晴|曇|小雨|雨|小雪|雪"
+            "reg": "晴|曇|小雨|雨|小雪|雪"
         },{
             "col_name": "race_number",
             "alias": "レース番号",
@@ -68,33 +68,33 @@
         },{
             "col_name": "head_count",
             "alias": "出走頭数",
-            "selector" : "td:nth-of-type(7)",
-            "var_type" : "integer",
-            "reg" : "\\d+"
+            "selector": "td:nth-of-type(7)",
+            "var_type": "integer",
+            "reg": "\\d+"
         },{
             "col_name": "bracket",
             "alias": "枠",
             "selector": "td:nth-of-type(8)",
             "var_type": "integer",
-            "reg" : "\\d+"
+            "reg": "\\d+"
         },{
-            "col_name" : "horse_number",
+            "col_name": "horse_number",
             "alias": "馬番",
-            "selector" : "td:nth-of-type(9)",
-            "var_type" : "integer",
-            "reg" : "\\d+"    
+            "selector": "td:nth-of-type(9)",
+            "var_type": "integer",
+            "reg": "\\d+"
         },{
-            "col_name" : "win_odds",
+            "col_name": "win_odds",
             "alias": "単勝オッズ",
-            "selector" : "td:nth-of-type(10)",
-            "var_type" : "real",
-            "reg" : "\\d+.?\\d?"
+            "selector": "td:nth-of-type(10)",
+            "var_type": "real",
+            "reg": "\\d+.?\\d?"
         },{
-            "col_name" : "popularity",
+            "col_name": "popularity",
             "alias": "人気順",
-            "selector" : "td:nth-of-type(11)",
-            "var_type" : "integer",
-            "reg" : "\\d+"
+            "selector": "td:nth-of-type(11)",
+            "var_type": "integer",
+            "reg": "\\d+"
         },{
             "col_name": "rank",
             "alias": "着順",
@@ -104,92 +104,92 @@
         },{
             "col_name": "jockey_id",
             "alias": "騎手ID",
-            "selector" : "td:nth-of-type(13) a",
+            "selector": "td:nth-of-type(13) a",
             "pre_func": {"name": "get_url", "args": ["jockey_id"]},
-            "var_type" : "text",
-            "reg" : "/jockey/result/recent/(\\d+)/"
+            "var_type": "text",
+            "reg": "/jockey/result/recent/(\\d+)/"
         },{
             "col_name": "jockey_name",
             "alias": "騎手名",
             "selector": "td:nth-of-type(13)",
             "var_type": "text",
-            "reg" : "\\S+"
+            "reg": "\\S+"
         },{
             "col_name": "burden",
             "alias": "斤量",
             "selector": "td:nth-of-type(14)",
             "var_type": "real",
-            "reg" : "\\d+.?\\d?"
+            "reg": "\\d+.?\\d?"
         },{
             "col_name": "type",
             "alias": "コース種別",
             "selector": "td:nth-of-type(15)",
             "var_type": "text",
-            "reg" : "[芝ダ障]"
+            "reg": "[芝ダ障]"
         },{
             "col_name": "length",
             "alias": "コース距離",
             "selector": "td:nth-of-type(15)",
             "var_type": "integer",
-            "reg" : "\\d{3,4}"
+            "reg": "\\d{3,4}"
         },{
-            "col_name" : "length_class",
+            "col_name": "length_class",
             "alias": "距離分類",
-            "selector" : "null",
+            "selector": "null",
             "post_func": {"name": "classify_length", "args": ["length"]},
-            "var_type" : "text"
+            "var_type": "text"
         },{
-            "col_name" : "course",
+            "col_name": "course",
             "alias": "コース",
-            "selector" : "null",
+            "selector": "null",
             "post_func": {"name": "concat", "args": ["place", "type", "length"]},
-            "var_type" : "text"
+            "var_type": "text"
         },{
             "col_name": "condition",
             "alias": "馬場",
-            "selector": "td:nth-of-type(16)",
+            "selector": "td:nth-of-type(17)",
             "var_type": "text",
-            "reg" : "良|稍|稍重|重|不良"
+            "reg": "良|稍|稍重|重|不良"
         },{
-            "col_name" : "rap_time",
+            "col_name": "rap_time",
             "alias": "タイム",
-            "selector" : "td:nth-of-type(18)",
+            "selector": "td:nth-of-type(19)",
             "pre_func": {"name": "time_to_seconds", "args": ["rap_time"]},
-            "var_type" : "real",
-            "reg" : "(\\d+.\\d+)"    
+            "var_type": "real",
+            "reg": "(\\d+.\\d+)"
         },{
-            "col_name" : "passage_rank",
+            "col_name": "passage_rank",
             "alias": "通過順",
-            "selector" : "td:nth-of-type(21)",
-            "var_type" : "text",
-            "reg" : "\\d{1,2}-\\d{1,2}-\\d{1,2}-\\d{1,2}|\\d{1,2}-\\d{1,2}-\\d{1,2}|\\d{1,2}-\\d{1,2}|\\d{1,2}"
+            "selector": "td:nth-of-type(22)",
+            "var_type": "text",
+            "reg": "\\d{1,2}-\\d{1,2}-\\d{1,2}-\\d{1,2}|\\d{1,2}-\\d{1,2}-\\d{1,2}|\\d{1,2}-\\d{1,2}|\\d{1,2}"
         },{
-            "col_name" : "last_3f",
+            "col_name": "last_3f",
             "alias": "後3F",
-            "selector" : "td:nth-of-type(23)",
-            "var_type" : "real",
-            "reg" : "(\\d+.\\d+)"
+            "selector": "td:nth-of-type(24)",
+            "var_type": "real",
+            "reg": "(\\d+.\\d+)"
         },{
             "col_name": "weight",
             "alias": "馬体重",
-            "selector": "td:nth-of-type(24)",
+            "selector": "td:nth-of-type(25)",
             "var_type": "integer",
             "reg": "(\\d+)\\([+-]?\\d*\\)"
         },{
             "col_name": "weight_diff",
             "alias": "増減",
-            "selector": "td:nth-of-type(24)",
+            "selector": "td:nth-of-type(25)",
             "var_type": "integer",
             "reg": "\\d+\\(([+-]?\\d+)\\)"
         },{
             "col_name": "prize",
             "alias": "賞金（万円）",
-            "selector": "td:nth-of-type(28)",
+            "selector": "td:nth-of-type(29)",
             "post_func": {"name": "zero_fill", "args": ["prize"]},
             "var_type": "real",
-            "reg" : "\\d+,\\d+.\\d+|\\d+.\\d+"
+            "reg": "\\d+,\\d+.\\d+|\\d+.\\d+"
         },{
-            "col_name": "id", 
+            "col_name": "id",
             "alias": "出走履歴ID",
             "selector": "null",
             "post_func": {"name": "create_uid", "args": ["race_id", "horse_number"]},

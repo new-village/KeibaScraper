@@ -1,7 +1,7 @@
 {
     "property": {
         "entry": "cal",
-        "url": "https://keiba.yahoo.co.jp/schedule/list/{year}/?month={month}",
+        "url": "https://sports.yahoo.co.jp/keiba/schedule/monthly?year={year}&month={month}",
         "mode": "html",
         "selector": "table.hr-tableSchedule tr > td.hr-tableSchedule__data > p",
         "validator": "table.hr-tableSchedule tr > td.hr-tableSchedule__data > p"

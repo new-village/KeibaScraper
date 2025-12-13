@@ -188,6 +188,8 @@ def classify_length(length):
     Returns:
         str: Category of the race length.
     """
+    if length is None:
+        return None
     if length < 1400:
         return 'Sprint'
     elif 1400 <= length < 1800:

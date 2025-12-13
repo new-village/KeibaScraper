@@ -20,7 +20,6 @@ class TestHorseLoader(unittest.TestCase):
         try:
             keibascraper.load('horse', cls.invalid_horse_id)
         except RuntimeError as e:
-            print(e)
             cls.invalid_horse_error = e
 
     def test_valid_horse(self):
