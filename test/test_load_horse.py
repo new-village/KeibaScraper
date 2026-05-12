@@ -1,10 +1,12 @@
 # test/test_load_horse.py
 
+import os
 import unittest
 from unittest.mock import patch, Mock
 import keibascraper
 
 
+@unittest.skipUnless(os.getenv('KEIBASCRAPER_LIVE_TESTS'), 'set KEIBASCRAPER_LIVE_TESTS=1 to run live netkeiba tests')
 class TestHorseLoader(unittest.TestCase):
     """Test HorseLoader with various horse IDs."""
 

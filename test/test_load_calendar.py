@@ -1,9 +1,11 @@
 # test_load_entry.py
 
+import os
 import unittest
 import keibascraper
 
 
+@unittest.skipUnless(os.getenv('KEIBASCRAPER_LIVE_TESTS'), 'set KEIBASCRAPER_LIVE_TESTS=1 to run live netkeiba tests')
 class TestEntryLoader(unittest.TestCase):
     """Test EntryLoader with various race IDs."""
 
