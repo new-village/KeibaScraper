@@ -1,15 +1,17 @@
+import importlib
 import unittest
 from unittest.mock import Mock, patch
 
 import requests
 
-from keibascraper.load import BaseLoader, CalendarLoader, DEFAULT_HEADERS
+load_module = importlib.import_module('keibascraper.load')
+BaseLoader = load_module.BaseLoader
+CalendarLoader = load_module.CalendarLoader
+DEFAULT_HEADERS = load_module.DEFAULT_HEADERS
 
 
 class TestBaseLoaderTransport(unittest.TestCase):
-    @patch('keibascraper.load.time.sleep')
-    @patch('keibascraper.load._create_session')
-    def test_result_requests_use_browser_headers_and_db_referer(self, mock_create_session, mock_sleep):
+    def test_result_requests_use_browser_headers_and_db_referer(self):
         response = Mock()
         response.text = '<html></html>'
         response.apparent_encoding = 'utf-8'
@@ -17,10 +19,11 @@ class TestBaseLoaderTransport(unittest.TestCase):
 
         session = Mock()
         session.get.return_value = response
-        mock_create_session.return_value = session
 
-        loader = BaseLoader('201206050810')
-        content = loader.load_contents('https://db.netkeiba.com/race/201206050810/')
+        with patch.object(load_module.time, 'sleep') as mock_sleep, \
+             patch.object(load_module, '_create_session', return_value=session) as mock_create_session:
+            loader = BaseLoader('201206050810')
+            content = loader.load_contents('https://db.netkeiba.com/race/201206050810/')
 
         self.assertEqual(content, '<html></html>')
         mock_create_session.assert_called_once_with()
@@ -31,32 +34,30 @@ class TestBaseLoaderTransport(unittest.TestCase):
         )
         mock_sleep.assert_called_once()
 
-    @patch('keibascraper.load.time.sleep')
-    @patch('keibascraper.load._create_session')
-    def test_request_errors_are_wrapped_without_changing_public_exception(self, mock_create_session, mock_sleep):
+    def test_request_errors_are_wrapped_without_changing_public_exception(self):
         session = Mock()
         session.get.side_effect = requests.HTTPError('403 Client Error')
-        mock_create_session.return_value = session
 
-        loader = BaseLoader('201206050810')
+        with patch.object(load_module.time, 'sleep'), \
+             patch.object(load_module, '_create_session', return_value=session):
+            loader = BaseLoader('201206050810')
 
-        with self.assertRaises(RuntimeError) as context:
-            loader.load_contents('https://db.netkeiba.com/race/201206050810/')
+            with self.assertRaises(RuntimeError) as context:
+                loader.load_contents('https://db.netkeiba.com/race/201206050810/')
 
         self.assertIn('Failed to load contents from https://db.netkeiba.com/race/201206050810/', str(context.exception))
 
 
 class TestCalendarLoaderTransport(unittest.TestCase):
-    @patch('keibascraper.load.requests.get')
-    def test_calendar_requests_use_browser_headers_and_yahoo_referer(self, mock_get):
+    def test_calendar_requests_use_browser_headers_and_yahoo_referer(self):
         response = Mock()
         response.text = '<html></html>'
         response.apparent_encoding = 'utf-8'
         response.raise_for_status.return_value = None
-        mock_get.return_value = response
 
-        loader = CalendarLoader(2023, 1)
-        content = loader.load_contents('https://sports.yahoo.co.jp/keiba/schedule/monthly?year=2023&month=1')
+        with patch.object(load_module.requests, 'get', return_value=response) as mock_get:
+            loader = CalendarLoader(2023, 1)
+            content = loader.load_contents('https://sports.yahoo.co.jp/keiba/schedule/monthly?year=2023&month=1')
 
         self.assertEqual(content, '<html></html>')
         args, kwargs = mock_get.call_args
