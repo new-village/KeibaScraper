@@ -8,8 +8,8 @@ from keibascraper.load import BaseLoader, CalendarLoader, DEFAULT_HEADERS
 
 class TestBaseLoaderTransport(unittest.TestCase):
     @patch('keibascraper.load.time.sleep')
-    @patch('keibascraper.load.requests.Session')
-    def test_result_requests_use_browser_headers_and_db_referer(self, mock_session_class, mock_sleep):
+    @patch('keibascraper.load._create_session')
+    def test_result_requests_use_browser_headers_and_db_referer(self, mock_create_session, mock_sleep):
         response = Mock()
         response.text = '<html></html>'
         response.apparent_encoding = 'utf-8'
@@ -17,13 +17,13 @@ class TestBaseLoaderTransport(unittest.TestCase):
 
         session = Mock()
         session.get.return_value = response
-        mock_session_class.return_value = session
+        mock_create_session.return_value = session
 
         loader = BaseLoader('201206050810')
         content = loader.load_contents('https://db.netkeiba.com/race/201206050810/')
 
         self.assertEqual(content, '<html></html>')
-        session.headers.update.assert_called_once_with(DEFAULT_HEADERS)
+        mock_create_session.assert_called_once_with()
         session.get.assert_called_once_with(
             'https://db.netkeiba.com/race/201206050810/',
             headers={'Referer': 'https://db.netkeiba.com/'},
@@ -32,11 +32,11 @@ class TestBaseLoaderTransport(unittest.TestCase):
         mock_sleep.assert_called_once()
 
     @patch('keibascraper.load.time.sleep')
-    @patch('keibascraper.load.requests.Session')
-    def test_request_errors_are_wrapped_without_changing_public_exception(self, mock_session_class, mock_sleep):
+    @patch('keibascraper.load._create_session')
+    def test_request_errors_are_wrapped_without_changing_public_exception(self, mock_create_session, mock_sleep):
         session = Mock()
         session.get.side_effect = requests.HTTPError('403 Client Error')
-        mock_session_class.return_value = session
+        mock_create_session.return_value = session
 
         loader = BaseLoader('201206050810')
 

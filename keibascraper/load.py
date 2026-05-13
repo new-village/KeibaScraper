@@ -3,6 +3,12 @@
 import time
 import random
 import requests
+from bs4 import UnicodeDammit
+
+try:
+    from curl_cffi import requests as browser_requests
+except ImportError:  # pragma: no cover - optional transport dependency may be absent
+    browser_requests = None
 
 from keibascraper.helper import load_config
 
@@ -45,11 +51,35 @@ def race_list(year:int, month:int) -> list:
     calc = CalendarLoader(year, month)
     return calc.load()
 
+
+def _create_session():
+    """Create an HTTP session that can reach netkeiba's Akamai-protected DB pages."""
+    if browser_requests is not None:
+        session = browser_requests.Session(impersonate='chrome124')
+    else:
+        session = requests.Session()
+    session.headers.update(DEFAULT_HEADERS)
+    return session
+
+
+def _response_text(response):
+    """Return response text with reliable Japanese encoding detection across transports."""
+    apparent_encoding = getattr(response, 'apparent_encoding', None)
+    if apparent_encoding:
+        response.encoding = apparent_encoding
+        return response.text
+
+    content = getattr(response, 'content', None)
+    if content:
+        return UnicodeDammit(content).unicode_markup
+
+    return response.text
+
+
 class BaseLoader:
     def __init__(self, entity_id):
         self.entity_id = entity_id
-        self.session = requests.Session()
-        self.session.headers.update(DEFAULT_HEADERS)
+        self.session = _create_session()
 
     def create_url(self, base_url):
         return base_url.replace('{ID}', self.entity_id)
@@ -61,9 +91,8 @@ class BaseLoader:
         try:
             response = self.session.get(url, headers=headers, timeout=20)
             response.raise_for_status()
-            response.encoding = response.apparent_encoding
-            return response.text
-        except requests.RequestException as e:
+            return _response_text(response)
+        except Exception as e:
             raise RuntimeError(f"Failed to load contents from {url}") from e
 
     def _referer_for(self, url):
@@ -173,8 +202,7 @@ class CalendarLoader:
             headers['Referer'] = 'https://sports.yahoo.co.jp/'
             response = requests.get(url, headers=headers, timeout=20)
             response.raise_for_status()
-            response.encoding = response.apparent_encoding
-            return response.text
+            return _response_text(response)
         except requests.RequestException as e:
             raise RuntimeError(f"Failed to load contents from {url}") from e
     
