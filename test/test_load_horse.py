@@ -1,10 +1,12 @@
 # test/test_load_horse.py
 
+import os
 import unittest
 from unittest.mock import patch, Mock
 import keibascraper
 
 
+@unittest.skipUnless(os.getenv('KEIBASCRAPER_LIVE_TESTS'), 'set KEIBASCRAPER_LIVE_TESTS=1 to run live netkeiba tests')
 class TestHorseLoader(unittest.TestCase):
     """Test HorseLoader with various horse IDs."""
 
@@ -15,7 +17,7 @@ class TestHorseLoader(unittest.TestCase):
         cls.valid_horse, cls.valid_result = keibascraper.load('horse', cls.valid_horse_id)
 
         # Load a non-existent horse
-        cls.invalid_horse_id = '2023104846'
+        cls.invalid_horse_id = '0000000000'
         cls.invalid_horse_error = None
         try:
             keibascraper.load('horse', cls.invalid_horse_id)

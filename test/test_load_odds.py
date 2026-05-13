@@ -1,9 +1,11 @@
 # test/test_load_odds.py
 
+import os
 import unittest
 import keibascraper
 
 
+@unittest.skipUnless(os.getenv('KEIBASCRAPER_LIVE_TESTS'), 'set KEIBASCRAPER_LIVE_TESTS=1 to run live netkeiba tests')
 class TestOddsLoader(unittest.TestCase):
     """Test OddsLoader with various race IDs."""
 

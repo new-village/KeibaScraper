@@ -13,7 +13,7 @@ setup(
     description='keibascraper is a simple scraping library for netkeiba.com',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=['requests', 'beautifulsoup4', 'jq'],
+    install_requires=['requests', 'beautifulsoup4', 'jq', 'curl_cffi'],
     packages=find_packages(),
     package_data={'': ['config/*.json']},
 )
